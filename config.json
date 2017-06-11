@@ -1,0 +1,34 @@
+{
+  "newsSources":[
+    {
+      "Name": "LogitechPressreleases",
+      "Url": "http://news.logitech.com/press_releases",
+      "PreExtractionRules":".//*[@id='bw-onecolumn']/div/div/div/div[5]/div/div/div[1]/div/ul/li",
+      "ExtractionRules": {
+        "Title": "div/div[contains(@class, 'views-field-title')]/span/a",
+        "Address": "div/div[contains(@class, 'views-field-title')]/span/a",
+        "Date": "div/div[contains(@class, 'views-field-created')]/span"
+      }
+    },
+    {
+      "Name": "LogitechBlog",
+      "Url": "http://blog.logitech.com/",
+      "PreExtractionRules":".//*[@id='main']/div[1]/div[contains(@class, 'one-third')]",
+      "ExtractionRules": {
+        "Title": "article/div/h2/a",
+        "Address": "article/div/h2/a",
+        "Date": "article/div/span[@class='date']"
+      }
+    },
+    {
+      "Name": "ElectronicArts",
+      "Url": "http://investor.ea.com/releases.cfm",
+      "PreExtractionRules":".//*[@id='wsh_newsList']/tbody/tr[not(@id) and @class]",
+      "ExtractionRules": {
+        "Title": "td[not(@class)]/a",
+        "Address": "td[not(@class)]/a",
+        "Date": "td[not(@class)]/p"
+      }
+    }
+  ]
+}
