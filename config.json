@@ -8,7 +8,8 @@
         "Title": "div/div[contains(@class, 'views-field-title')]/span/a",
         "Address": "div/div[contains(@class, 'views-field-title')]/span/a",
         "Date": "div/div[contains(@class, 'views-field-created')]/span"
-      }
+      },
+      "Fetch": "true"
     },
     {
       "Name": "LogitechBlog",
@@ -18,7 +19,8 @@
         "Title": "article/div/h2/a",
         "Address": "article/div/h2/a",
         "Date": "article/div/span[@class='date']"
-      }
+      },
+      "Fetch": "true"
     },
     {
       "Name": "ElectronicArts",
@@ -28,7 +30,30 @@
         "Title": "td[not(@class)]/a",
         "Address": "td[not(@class)]/a",
         "Date": "td[not(@class)]/p"
-      }
+      },
+      "Fetch": "true"
+    },
+    {
+      "Name": "BethesdaNews",
+      "Url": "https://bethesda.net/en/news",
+      "PreExtractionRules":".//*[@id='newsContainer']/div/div/section/main/article",
+      "ExtractionRules": {
+        "Title": "a/div/h3",
+        "Address": "a",
+        "Date": "a/div/ul/li/time"
+      },
+      "Fetch": "true"
+    },
+    {
+      "Name": "RockstarNewswire",
+      "Url": "http://www.rockstargames.com/newswire/tags/",
+      "PreExtractionRules":".//*[@id='siteBody']/div/div/div/div/div/div/div[contains(@class, 'article')]",
+      "ExtractionRules": {
+        "Title": "div/div/a/h3",
+        "Address": "div/div/a[not(@class)]",
+        "Date": "div"
+      },
+      "Fetch": "true"
     }
   ]
 }

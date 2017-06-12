@@ -24,11 +24,10 @@ var page = new WebPage()
 var fs = require('fs');
 
 page.onLoadFinished = function() {
-  //console.log("page load finished");
-  //page.render('export.png');
-  //fs.write('1.html', page.content, 'w');
-    console.log(page.content);
-  phantom.exit();
+    window.setTimeout(function () {
+        console.log(page.content);
+        phantom.exit();
+    }, 5000);
 };
 
 page.open(url, function() {
