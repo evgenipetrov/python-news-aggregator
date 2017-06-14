@@ -3,6 +3,7 @@ import subprocess
 import validators
 import time
 import csv
+import datetime
 
 from urllib import parse
 from lxml import html
@@ -54,11 +55,17 @@ def get_config(config_file):
 
 def get_old_news(file):
     output = []
-    with open(file, 'r') as f:
-        reader = csv.reader(f)
+    #with open(file, newline='') as f:
+    #    reader = csv.reader(f, delimiter=' ', quotechar='|')
+    #    for row in reader:
+    #        output.append(row)
+    with open(file) as f:
+        reader = csv.DictReader(f)
         for row in reader:
-            output.append({'TimeStamp': row[0], 'Date': row[1], 'Title': row[2]})
+            output.append(row)
     return output
+
+#def save_latest_news(news):
 
 
 
@@ -82,26 +89,41 @@ for news_source in news_sources:
         newsItems = html.fromstring(output).xpath(news_source['PreExtractionRules'])
 
         for newsItem in newsItems:
-            date = newsItem.xpath(news_source['ExtractionRules']['Date'])[0].text
-            print(date)
-            title = newsItem.xpath(news_source['ExtractionRules']['Title'])[0].text
-            print(title)
+            news_date = newsItem.xpath(news_source['ExtractionRules']['Date'])[0].text
+            if news_date is None:
+                news_date = '-'
+            print(news_date)
+            news_title = newsItem.xpath(news_source['ExtractionRules']['Title'])[0].text
+            if news_title is None:
+                news_title = '-'
+            print(news_title)
             href = newsItem.xpath(news_source['ExtractionRules']['Address'])[0].attrib['href']
             if (validators.url(href)):
-                url = href
+                news_url = href
             else:
                 page = parse.urlparse(news_source['Url'])
                 if not (href.startswith('/')):
                     href = '/' + href
-                url = page.scheme + "://" + page.netloc + href
-            print(url)
+                news_url = page.scheme + "://" + page.netloc + href
+            if news_url is None:
+                news_url = '-'
+            print(news_url)
+
+            timestamp = int(time.time())
+            vendor = news_source['Name']
+            #if not news_date == '':
+            #    news_date.strip()
+            if not news_title == '':
+                news_title.strip()
+            if not news_url == '':
+                news_url.strip()
 
             scraped_data.append({
-                'TimeStamp': time.time(),
-                'Vendor': news_source['Name'],
-                'Date': date.strip(),
-                'Title': title.strip(),
-                'URL': url.strip(),
+                'TimeStamp': timestamp,
+                'Vendor': vendor,
+                'Date': news_date,
+                'Title': news_title,
+                'URL': news_url,
                 'New': bool(1)
             })
 
@@ -117,24 +139,47 @@ for scraped_data_entry in scraped_data:
     if scraped_data_entry['New'] == bool(1):
         old_news.insert(0, scraped_data_entry)
 
-latest_news = sorted(old_news, key=lambda x: x['TimeStamp'], reverse=True)
+latest_news = sorted(old_news, key=lambda x: int(x['TimeStamp']), reverse=True)
 
 html_source ="""
-<html><head></head><body><table>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+         <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+    </head>
+<body><table>
+<tr>
+    <th>Imported</th><th>Vendor</th><th>Publish date</th><th>News</th>
+</tr>
 """
 
 for news_entry in latest_news:
-    tr = "<tr><td>"+news_entry['Date']+"</td><td>"+news_entry['Title']+"</td></tr>"
+    imported = datetime.datetime.fromtimestamp(float(news_entry['TimeStamp'])).strftime('%c')
+    vendor = news_entry['Vendor']
+    date = news_entry['Date']
+    a = "<a href=\""+news_entry['URL']+"\" target=\"_blank\">"+news_entry['Title']+"</a>"
+    tr = "<tr><td>"+imported+"</td><td>"+vendor+"</td><td>"+date+"</td><td>"+a+"</td></tr>"
     html_source += tr
 
 html_source +="""
 </table></body></html>
 """
 
-with open(NEWS_FILE, 'w') as f:
-    wr = csv.writer(f, quoting=csv.QUOTE_ALL)
-    for row in latest_news:
-        wr.writerow(row)
+with open(NEWS_FILE, 'w', newline='') as f:
+    keys = latest_news[0].keys()
+    dict_writer = csv.DictWriter(f, keys)
+    dict_writer.writeheader()
+    dict_writer.writerows(latest_news)
+
+soup=BeautifulSoup(html_source, "lxml")                #make BeautifulSoup
+prettyHTML=soup.prettify()
 
 with open(HTML_FILE, 'w') as f:
-    f.write(html_source)
+    f.write(prettyHTML)

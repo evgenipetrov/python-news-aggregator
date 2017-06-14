@@ -20,7 +20,7 @@
         "Address": "article/div/h2/a",
         "Date": "article/div/span[@class='date']"
       },
-      "Fetch": "false"
+      "Fetch": "true"
     },
     {
       "Name": "ElectronicArts",
@@ -31,7 +31,7 @@
         "Address": "td[not(@class)]/a",
         "Date": "td[not(@class)]/p"
       },
-      "Fetch": "false"
+      "Fetch": "true"
     },
     {
       "Name": "BethesdaNews",
@@ -42,7 +42,7 @@
         "Address": "a",
         "Date": "a/div/ul/li/time"
       },
-      "Fetch": "false"
+      "Fetch": "true"
     },
     {
       "Name": "RockstarNewswire",
@@ -53,7 +53,7 @@
         "Address": "div/div/a[not(@class)]",
         "Date": "div"
       },
-      "Fetch": "false"
+      "Fetch": "true"
     }
   ]
 }
